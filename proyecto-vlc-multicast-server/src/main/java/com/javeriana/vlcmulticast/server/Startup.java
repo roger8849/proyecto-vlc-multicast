@@ -9,15 +9,20 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import com.javeriana.vlcmulticast.server.dto.MulticastMessage;
+import com.javeriana.vlcmulticast.server.service.MulticastService;
 import com.javeriana.vlcmulticast.server.util.MulticastProperties;
 
 @SpringBootApplication
 public class Startup implements CommandLineRunner {
 
-  public static final Logger logger = LoggerFactory.getLogger(Startup.class);
+  public static final Logger LOG = LoggerFactory.getLogger(Startup.class);
 
   @Autowired
   MulticastProperties multicastProperties;
+
+  @Autowired
+  MulticastService multicastService;
 
   public static void main(String[] args) throws Exception {
 
@@ -28,8 +33,8 @@ public class Startup implements CommandLineRunner {
 
   @Override
   public void run(String... args) throws Exception {
-    System.out.println(multicastProperties.getInetAddress());
-    logger.debug("TEST debug");
+    MulticastMessage multicastMessage = this.multicastService.askAndReceiveVlcConfiguration();
+    LOG.debug("multicast message received: {}", multicastMessage);
     exit(0);
   }
 }

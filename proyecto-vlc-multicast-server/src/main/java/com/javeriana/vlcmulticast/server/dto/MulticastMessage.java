@@ -1,9 +1,11 @@
 package com.javeriana.vlcmulticast.server.dto;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.UUID;
 
 import com.javeriana.vlcmulticast.server.enumeration.MessageType;
+import com.javeriana.vlcmulticast.server.util.ObjectConverter;
 
 public class MulticastMessage implements Serializable {
   /** */
@@ -45,6 +47,15 @@ public class MulticastMessage implements Serializable {
 
   public void setVlcCommand(String vlcCommand) {
     this.vlcCommand = vlcCommand;
+  }
+
+  @Override
+  public String toString() {
+    try {
+      return ObjectConverter.fromObjectToJsonString(this);
+    } catch (IOException e) {
+      return super.toString();
+    }
   }
 
 }
