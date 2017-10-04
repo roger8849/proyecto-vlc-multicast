@@ -1,4 +1,5 @@
-package com.javeriana.vlcmulticast;
+package com.javeriana.vlcmulticast.server;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -15,6 +16,7 @@ public class MulticastSocketServer {
     InetAddress addr = InetAddress.getByName(INET_ADDR);
 
     // Open a new DatagramSocket, which will be used to send the data.
+
     try (DatagramSocket serverSocket = new DatagramSocket()) {
       for (int i = 0; i < 5; i++) {
         String msg = "Sent message no " + i;
