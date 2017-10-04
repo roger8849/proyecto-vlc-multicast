@@ -1,4 +1,4 @@
-package com.javeriana.vlcmulticast.server.service.impl;
+package com.javeriana.vlcmulticast.client.service.impl;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -12,11 +12,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.javeriana.vlcmulticast.server.dto.MulticastMessage;
-import com.javeriana.vlcmulticast.server.enumeration.MessageType;
-import com.javeriana.vlcmulticast.server.service.MulticastService;
-import com.javeriana.vlcmulticast.server.util.MulticastProperties;
-import com.javeriana.vlcmulticast.server.util.ObjectConverter;
+import com.javeriana.vlcmulticast.client.dto.MulticastMessage;
+import com.javeriana.vlcmulticast.client.enumeration.MessageType;
+import com.javeriana.vlcmulticast.client.service.MulticastService;
+import com.javeriana.vlcmulticast.client.util.MulticastProperties;
+import com.javeriana.vlcmulticast.client.util.ObjectConverter;
 
 @Service
 public class DefaultMulticastService implements MulticastService {

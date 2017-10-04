@@ -14,9 +14,9 @@ import com.javeriana.vlcmulticast.server.service.MulticastService;
 import com.javeriana.vlcmulticast.server.util.MulticastProperties;
 
 @SpringBootApplication
-public class Startup implements CommandLineRunner {
+public class StartupServer implements CommandLineRunner {
 
-  public static final Logger LOG = LoggerFactory.getLogger(Startup.class);
+  public static final Logger LOG = LoggerFactory.getLogger(StartupServer.class);
 
   @Autowired
   MulticastProperties multicastProperties;
@@ -26,7 +26,7 @@ public class Startup implements CommandLineRunner {
 
   public static void main(String[] args) throws Exception {
 
-    SpringApplication app = new SpringApplication(Startup.class);
+    SpringApplication app = new SpringApplication(StartupServer.class);
     app.run(args);
 
   }

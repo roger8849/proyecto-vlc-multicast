@@ -1,4 +1,4 @@
-package com.javeriana.vlcmulticast.server.util;
+package com.javeriana.vlcmulticast.client.util;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.PropertySource;

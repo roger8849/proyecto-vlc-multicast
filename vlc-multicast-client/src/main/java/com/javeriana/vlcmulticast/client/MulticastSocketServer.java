@@ -1,4 +1,4 @@
-package com.javeriana.vlcmulticast.server;
+package com.javeriana.vlcmulticast.client;
 
 import java.io.IOException;
 import java.net.DatagramPacket;

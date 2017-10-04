@@ -1,4 +1,4 @@
-package com.javeriana.vlcmulticast.server.util;
+package com.javeriana.vlcmulticast.client.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -12,7 +12,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.javeriana.vlcmulticast.server.dto.MulticastMessage;
+import com.javeriana.vlcmulticast.client.dto.MulticastMessage;
 
 public class ObjectConverter {
 

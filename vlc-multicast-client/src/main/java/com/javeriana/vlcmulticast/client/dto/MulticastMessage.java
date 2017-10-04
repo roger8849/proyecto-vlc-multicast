@@ -1,11 +1,11 @@
-package com.javeriana.vlcmulticast.server.dto;
+package com.javeriana.vlcmulticast.client.dto;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.UUID;
 
-import com.javeriana.vlcmulticast.server.enumeration.MessageType;
-import com.javeriana.vlcmulticast.server.util.ObjectConverter;
+import com.javeriana.vlcmulticast.client.enumeration.MessageType;
+import com.javeriana.vlcmulticast.client.util.ObjectConverter;
 
 public class MulticastMessage implements Serializable {
   /** */
