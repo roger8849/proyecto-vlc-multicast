@@ -1,5 +1,6 @@
 package com.javeriana.vlcmulticast.server.service.impl;
 
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -32,40 +33,47 @@ public class DefaultMulticastService implements MulticastService {
    */
   @Override
   public MulticastMessage askAndReceiveVlcConfiguration() throws Exception {
-    MulticastMessage configurationReceived = null;
     InetAddress multicastAddress = InetAddress.getByName(multicastProperties.getInetAddress());
     Integer port = Integer.parseInt(multicastProperties.getInetPort());
-    MulticastSocket clientSocket = new MulticastSocket(port);
-    clientSocket.joinGroup(multicastAddress);
-    DatagramPacket receivedPacket = null;
-    boolean keepAsking = true;
-    do {
-      try {
-        this.askForConfiguration(multicastAddress, port);
-        LOG.debug("Waiting for response");
-        byte[] buffer = new byte[1024];
-        receivedPacket = new DatagramPacket(buffer, buffer.length);
-        clientSocket.receive(receivedPacket);
-        configurationReceived = ObjectConverter.fromByteDataToMessage(receivedPacket.getData());
-        if (configurationReceived != null && MessageType.PARAMETERS_OF_START.toString()
-            .equalsIgnoreCase(configurationReceived.getMessageType().toString())) {
-          LOG.debug("Received configuration stop asking: {}", configurationReceived);
-          keepAsking = false;
-        } else {
-          LOG.debug("No response got it, retrying in 5 seconds.");
-          synchronized (this) {
-            this.wait(5000);
-          }
-        }
-      } catch (Exception e) {
-        LOG.error("Exception occurred asking for the configuration.", e);
-      }
-    } while (keepAsking);
+    this.askForConfiguration(multicastAddress, port);
+    return receiveVlcConfigurationResponse(multicastAddress, port);
+  }
 
-    if (clientSocket != null) {
+  private MulticastMessage receiveVlcConfigurationResponse(InetAddress multicastAddress,
+      Integer port) throws IOException {
+    MulticastSocket clientSocket = new MulticastSocket(port);
+    MulticastMessage configurationReceived = null;
+    try {
+      clientSocket.joinGroup(multicastAddress);
+      DatagramPacket receivedPacket = null;
+      boolean keepAsking = true;
+      do {
+        try {
+          LOG.debug("Waiting for response");
+          synchronized (this) {
+            this.wait(500);
+          }
+          byte[] buffer = new byte[1024];
+          receivedPacket = new DatagramPacket(buffer, buffer.length);
+          clientSocket.receive(receivedPacket);
+          configurationReceived = ObjectConverter.fromByteDataToMessage(receivedPacket.getData());
+          if (configurationReceived != null && MessageType.PARAMETERS_OF_START.toString()
+              .equalsIgnoreCase(configurationReceived.getMessageType().toString())) {
+            LOG.debug("Received configuration stop asking: {}", configurationReceived);
+            keepAsking = false;
+          } else {
+            LOG.debug("No response got it, retrying in 5 seconds.");
+            synchronized (this) {
+              this.wait(5000);
+            }
+          }
+        } catch (Exception e) {
+          LOG.error("Exception occurred asking for the configuration.", e);
+        }
+      } while (keepAsking);
+    } finally {
       clientSocket.close();
     }
-
     return configurationReceived;
   }
 
