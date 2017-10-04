@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.javeriana.vlcmulticast</groupId>
-	<artifactId>proyecto-vlc-multicast-server</artifactId>
+	<artifactId>vlc-multicast-client</artifactId>
 	<packaging>jar</packaging>
 	<version>1.0</version>
 

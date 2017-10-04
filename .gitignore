@@ -28,3 +28,7 @@ hs_err_pid*
 proyecto-vlc-multicast-client/target/
 proyecto-vlc-multicast-server/target/classes/META-INF/maven/com.javeriana.vlcmulticast/proyecto-vlc-multicast-server/pom.properties
 proyecto-vlc-multicast-server/target/
+vlc-multicast-client/target/classes/application.properties
+vlc-multicast-client/target/
+vlc-multicast-server/target/classes/logback.xml
+vlc-multicast-server/target/
