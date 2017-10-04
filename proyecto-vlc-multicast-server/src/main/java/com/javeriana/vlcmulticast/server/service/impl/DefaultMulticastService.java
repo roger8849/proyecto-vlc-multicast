@@ -3,6 +3,7 @@ package com.javeriana.vlcmulticast.server.service.impl;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.MulticastSocket;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -23,32 +24,68 @@ public class DefaultMulticastService implements MulticastService {
   @Autowired
   private MulticastProperties multicastProperties;
 
-  /* (non-Javadoc)
-   * @see com.javeriana.vlcmulticast.server.service.impl.MulticastService#askAndReceiveVlcConfiguration()
+  /*
+   * (non-Javadoc)
+   *
+   * @see
+   * com.javeriana.vlcmulticast.server.service.impl.MulticastService#askAndReceiveVlcConfiguration()
    */
   @Override
   public MulticastMessage askAndReceiveVlcConfiguration() throws Exception {
-    this.askForConfiguration();
-    return null;
+    MulticastMessage configurationReceived = null;
+    InetAddress multicastAddress = InetAddress.getByName(multicastProperties.getInetAddress());
+    Integer port = Integer.parseInt(multicastProperties.getInetPort());
+    MulticastSocket clientSocket = new MulticastSocket(port);
+    clientSocket.joinGroup(multicastAddress);
+    DatagramPacket receivedPacket = null;
+    boolean keepAsking = true;
+    do {
+      try {
+        this.askForConfiguration(multicastAddress, port);
+        LOG.debug("Waiting for response");
+        byte[] buffer = new byte[1024];
+        receivedPacket = new DatagramPacket(buffer, buffer.length);
+        clientSocket.receive(receivedPacket);
+        configurationReceived = ObjectConverter.fromByteDataToMessage(receivedPacket.getData());
+        if (configurationReceived != null && MessageType.PARAMETERS_OF_START.toString()
+            .equalsIgnoreCase(configurationReceived.getMessageType().toString())) {
+          LOG.debug("Received configuration stop asking: {}", configurationReceived);
+          keepAsking = false;
+        } else {
+          LOG.debug("No response got it, retrying in 5 seconds.");
+          synchronized (this) {
+            this.wait(5000);
+          }
+        }
+      } catch (Exception e) {
+        LOG.error("Exception occurred asking for the configuration.", e);
+      }
+    } while (keepAsking);
+
+    if (clientSocket != null) {
+      clientSocket.close();
+    }
+
+    return configurationReceived;
   }
 
-  private void askForConfiguration() throws Exception {
+  private void askForConfiguration(InetAddress multicastAddress, Integer port) throws Exception {
     MulticastMessage message = new MulticastMessage(UUID.randomUUID(), MessageType.ASKING, "");
     LOG.debug("Init message send succesfuly sent: {}", message);
-    DatagramSocket socket = new DatagramSocket();
+    DatagramSocket serverSocket = new DatagramSocket();
     try {
-      InetAddress multicastAddress = InetAddress.getByName(multicastProperties.getInetAddress());
+
       byte[] dataMessage = ObjectConverter.fromMessageToByteData(message);
-      DatagramPacket msgPacket = new DatagramPacket(dataMessage, dataMessage.length,
-          multicastAddress, Integer.parseInt(multicastProperties.getInetPort()));
-      socket.send(msgPacket);
+      DatagramPacket msgPacket =
+          new DatagramPacket(dataMessage, dataMessage.length, multicastAddress, port);
+      serverSocket.send(msgPacket);
       LOG.debug("Message succesfuly sent: {}", message);
     } catch (Exception e) {
       LOG.debug(e.getMessage());
       throw e;
 
     } finally {
-      socket.close();
+      serverSocket.close();
     }
 
   }

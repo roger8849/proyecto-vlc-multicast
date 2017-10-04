@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +36,12 @@ public class ObjectConverter {
     MulticastMessage multicastObject = (MulticastMessage) is.readObject();
     LOG.debug("Multicast object transformed: {}", multicastObject);
     return multicastObject;
+  }
+
+  public static String fromObjectToJsonString(Object object)
+      throws JsonGenerationException, JsonMappingException, IOException {
+    ObjectMapper mapper = new ObjectMapper();
+    return mapper.writeValueAsString(object);
   }
 
   private ObjectConverter() {}
