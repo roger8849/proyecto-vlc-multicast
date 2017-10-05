@@ -29,39 +29,42 @@ public class DefaultMulticastClientService implements MulticastClientService {
   @Autowired
   private VlcProperties vlcProperties;
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   *
    * @see com.javeriana.vlcmulticast.client.service.impl.MulticastClientService#listenForRequests()
    */
   @Override
-  public MulticastMessage listenForRequests() throws IOException {
+  public void listenForRequests() throws IOException {
     MulticastMessage multicastMessage = null;
     InetAddress multicastAddress = InetAddress.getByName(multicastProperties.getInetAddress());
     Integer port = Integer.parseInt(multicastProperties.getInetPort());
-    byte[] buffer = new byte[256];
+    byte[] buffer = new byte[1024];
     MulticastSocket multicastSocket = null;
     try {
-      multicastSocket = new MulticastSocket(port);
-      multicastSocket.joinGroup(multicastAddress);
       do {
-        LOG.debug("Listening for params.");
-        DatagramPacket msgPacket = new DatagramPacket(buffer, buffer.length);
-        multicastSocket.receive(msgPacket);
-        multicastMessage = ObjectConverter.fromByteDataToMessage(msgPacket.getData());
-        LOG.debug("Message listened: {}", ObjectConverter.fromObjectToJsonString(multicastMessage));
-        if (multicastMessage != null && MessageType.ASKING.toString()
-            .equalsIgnoreCase(multicastMessage.getMessageType().toString())) {
-          this.sendVlcConfiguration(multicastAddress, port);
+        try {
+          multicastSocket = new MulticastSocket(port);
+          multicastSocket.joinGroup(multicastAddress);
+
+          LOG.debug("Listening for params.");
+          DatagramPacket msgPacket = new DatagramPacket(buffer, buffer.length);
+          multicastSocket.receive(msgPacket);
+          multicastMessage = ObjectConverter.fromByteDataToMessage(msgPacket.getData());
+          LOG.debug("Message listened: {}",
+              ObjectConverter.fromObjectToJsonString(multicastMessage));
+          if (multicastMessage != null && MessageType.ASKING.toString()
+              .equalsIgnoreCase(multicastMessage.getMessageType().toString())) {
+            this.sendVlcConfiguration(multicastAddress, port);
+          }
+        } catch (Exception e) {
+          LOG.error("Error getting listening for a message.", e);
         }
       } while (true);
-    } catch (Exception e) {
-      LOG.error("Error getting listening for a message.", e);
     } finally {
-      if (multicastSocket != null) {
+      if (multicastSocket != null)
         multicastSocket.close();
-      }
-
     }
-    return multicastMessage;
 
   }
 
