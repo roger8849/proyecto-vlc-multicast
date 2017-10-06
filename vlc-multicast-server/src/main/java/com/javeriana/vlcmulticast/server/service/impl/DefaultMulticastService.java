@@ -1,10 +1,10 @@
 package com.javeriana.vlcmulticast.server.service.impl;
 
-import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.net.SocketTimeoutException;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -34,21 +34,24 @@ public class DefaultMulticastService implements MulticastService {
   @Override
   public MulticastMessage askAndReceiveVlcConfiguration() throws Exception {
     InetAddress multicastAddress = InetAddress.getByName(multicastProperties.getInetAddress());
-    Integer port = Integer.parseInt(multicastProperties.getInetPort());
-    this.askForConfiguration(multicastAddress, port);
-    return receiveVlcConfigurationResponse(multicastAddress, port);
+    Integer port = multicastProperties.getInetPort();
+    Integer timeout = multicastProperties.getTimeout();
+
+    return receiveVlcConfigurationResponse(multicastAddress, port, timeout);
   }
 
   private MulticastMessage receiveVlcConfigurationResponse(InetAddress multicastAddress,
-      Integer port) throws IOException {
+      Integer port, Integer timeout) throws Exception {
     MulticastSocket clientSocket = new MulticastSocket(port);
     MulticastMessage configurationReceived = null;
+    clientSocket.setSoTimeout(timeout);
     try {
       clientSocket.joinGroup(multicastAddress);
       DatagramPacket receivedPacket = null;
       boolean keepAsking = true;
       do {
         try {
+          this.askForConfiguration(multicastAddress, port);
           LOG.debug("Waiting for response");
           synchronized (this) {
             this.wait(500);
@@ -66,6 +69,11 @@ public class DefaultMulticastService implements MulticastService {
             synchronized (this) {
               this.wait(5000);
             }
+          }
+        } catch (SocketTimeoutException e) {
+          LOG.debug("No response got it, retrying in 5 seconds.");
+          synchronized (this) {
+            this.wait(5000);
           }
         } catch (Exception e) {
           LOG.error("Exception occurred asking for the configuration.", e);

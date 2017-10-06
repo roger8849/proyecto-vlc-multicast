@@ -9,7 +9,8 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties("multicast")
 public class MulticastProperties {
   private String inetAddress;
-  private String inetPort;
+  private Integer inetPort;
+  private Integer timeout;
 
   public String getInetAddress() {
     return inetAddress;
@@ -19,12 +20,20 @@ public class MulticastProperties {
     this.inetAddress = inetAddress;
   }
 
-  public String getInetPort() {
+  public Integer getInetPort() {
     return inetPort;
   }
 
-  public void setInetPort(String inetPort) {
+  public void setInetPort(Integer inetPort) {
     this.inetPort = inetPort;
+  }
+
+  public Integer getTimeout() {
+    return timeout;
+  }
+
+  public void setTimeout(Integer timeout) {
+    this.timeout = timeout;
   }
 
 }
