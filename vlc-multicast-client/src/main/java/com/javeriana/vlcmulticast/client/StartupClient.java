@@ -9,8 +9,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.javeriana.vlcmulticast.client.dto.MulticastMessage;
-import com.javeriana.vlcmulticast.client.service.MulticastService;
+import com.javeriana.vlcmulticast.client.service.MulticastClientService;
 import com.javeriana.vlcmulticast.client.util.MulticastProperties;
 
 @SpringBootApplication
@@ -22,7 +21,7 @@ public class StartupClient implements CommandLineRunner {
   MulticastProperties multicastProperties;
 
   @Autowired
-  MulticastService multicastService;
+  MulticastClientService multicastClientService;
 
   public static void main(String[] args) throws Exception {
 
@@ -33,8 +32,7 @@ public class StartupClient implements CommandLineRunner {
 
   @Override
   public void run(String... args) throws Exception {
-    MulticastMessage multicastMessage = this.multicastService.askAndReceiveVlcConfiguration();
-    LOG.debug("multicast message received: {}", multicastMessage);
+    this.multicastClientService.listenForRequests();
     exit(0);
   }
 }

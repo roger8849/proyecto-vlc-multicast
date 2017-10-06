@@ -1,4 +1,4 @@
-package com.javeriana.vlcmulticast.server.util;
+package com.javeriana.vlcmulticast.client.util;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.PropertySource;
@@ -6,19 +6,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 @PropertySource("classpath:application.properties")
-@ConfigurationProperties("multicast")
-public class MulticastProperties {
+@ConfigurationProperties("vlc")
+public class VlcProperties {
+
   private String inetAddress;
   private Integer inetPort;
-  private Integer timeout;
-
-  public String getInetAddress() {
-    return inetAddress;
-  }
-
-  public void setInetAddress(String inetAddress) {
-    this.inetAddress = inetAddress;
-  }
+  private String command;
 
   public Integer getInetPort() {
     return inetPort;
@@ -28,12 +21,20 @@ public class MulticastProperties {
     this.inetPort = inetPort;
   }
 
-  public Integer getTimeout() {
-    return timeout;
+  public String getInetAddress() {
+    return inetAddress;
   }
 
-  public void setTimeout(Integer timeout) {
-    this.timeout = timeout;
+  public void setInetAddress(String inetAddress) {
+    this.inetAddress = inetAddress;
+  }
+
+  public String getCommand() {
+    return command;
+  }
+
+  public void setCommand(String command) {
+    this.command = command;
   }
 
 }

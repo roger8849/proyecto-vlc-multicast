@@ -11,7 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.javeriana.vlcmulticast.server.dto.MulticastMessage;
 import com.javeriana.vlcmulticast.server.service.MulticastService;
-import com.javeriana.vlcmulticast.server.util.MulticastProperties;
+import com.javeriana.vlcmulticast.server.service.VlcService;
 
 @SpringBootApplication
 public class StartupServer implements CommandLineRunner {
@@ -19,10 +19,10 @@ public class StartupServer implements CommandLineRunner {
   public static final Logger LOG = LoggerFactory.getLogger(StartupServer.class);
 
   @Autowired
-  MulticastProperties multicastProperties;
+  MulticastService multicastService;
 
   @Autowired
-  MulticastService multicastService;
+  VlcService vlcService;
 
   public static void main(String[] args) throws Exception {
 
@@ -35,6 +35,7 @@ public class StartupServer implements CommandLineRunner {
   public void run(String... args) throws Exception {
     MulticastMessage multicastMessage = this.multicastService.askAndReceiveVlcConfiguration();
     LOG.debug("multicast message received: {}", multicastMessage);
+    this.vlcService.runVlcCommand(multicastMessage);
     exit(0);
   }
 }
