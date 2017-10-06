@@ -15,6 +15,10 @@ public class MulticastMessage implements Serializable {
   private MessageType messageType;
   private String vlcCommand;
 
+  public MulticastMessage() {
+    super();
+  }
+
   public MulticastMessage(UUID messageId, MessageType messageType, String vlcCommand) {
     super();
     this.messageId = messageId;

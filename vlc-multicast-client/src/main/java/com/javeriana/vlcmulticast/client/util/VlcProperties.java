@@ -8,7 +8,26 @@ import org.springframework.stereotype.Component;
 @PropertySource("classpath:application.properties")
 @ConfigurationProperties("vlc")
 public class VlcProperties {
+
+  private String inetAddress;
+  private Integer inetPort;
   private String command;
+
+  public Integer getInetPort() {
+    return inetPort;
+  }
+
+  public void setInetPort(Integer inetPort) {
+    this.inetPort = inetPort;
+  }
+
+  public String getInetAddress() {
+    return inetAddress;
+  }
+
+  public void setInetAddress(String inetAddress) {
+    this.inetAddress = inetAddress;
+  }
 
   public String getCommand() {
     return command;
